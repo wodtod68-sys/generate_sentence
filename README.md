@@ -1,6 +1,4 @@
-==============================================================================
- Bigram (2-gram) Statistical Language Model — Training & Sentence Generation
-==============================================================================
+# Bigram (2-gram) Statistical Language Model — Training & Sentence Generation
 
 A minimal, from-scratch statistical language model that learns word-level
 bigram statistics from a plain-text corpus and then uses them to (a) generate
