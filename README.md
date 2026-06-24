@@ -26,12 +26,12 @@ raw counts:
     P(w2 | w1) = count(w1, w2) / count(w1)
 
 Two special boundary tokens frame every sentence:
-  <s>   sentence-start marker
-  </s>  sentence-end marker
+  `<s>`    sentence-start marker
+  `</s>`   sentence-end marker
 
 These let the model learn which words tend to begin a sentence (bigrams from
-<s>) and which tend to end it (bigrams into </s>), and they give generation a
-well-defined start and stop condition.
+the start marker) and which tend to end it (bigrams into the end marker), and
+they give generation a well-defined start and stop condition.
 
 Tokenization is whitespace-based: each line of the corpus is treated as one
 sentence and split on spaces. This keeps the pipeline language-agnostic (it
@@ -47,7 +47,7 @@ Output: a pickled model dictionary.
 
 Procedure:
   1. Read the corpus line by line; skip empty lines.
-  2. Wrap each sentence as  [<s>] + tokens + [</s>].
+  2. Wrap each sentence as  `<s>` + tokens + `</s>`.
   3. Accumulate two count tables in a single pass:
        - unigram_counts : frequency of each token  (dict: word -> count)
        - bigram_counts  : frequency of each adjacent pair, stored as a
@@ -75,16 +75,16 @@ The generator exposes three core routines.
     most likely word every time.
     Fallback: if the current word was never seen as a left context, a word is
     drawn uniformly at random from the unigram vocabulary; if the vocabulary is
-    empty, </s> is emitted to terminate.
+    empty, `</s>` is emitted to terminate.
 
 (b) generate_sentence(model, start_with) — Markov-chain rollout
-    Generation begins from <s> alone, or from <s> + user-supplied seed words.
-    Words are appended one at a time via get_next_word until either the </s>
-    token is produced or a safety cap of 50 tokens is reached (to prevent
-    runaway loops). The <s>/</s> markers are stripped from the final output.
+    Generation begins from `<s>` alone, or from `<s>` + user-supplied seed
+    words. Words are appended one at a time via get_next_word until either the
+    `</s>` token is produced or a safety cap of 50 tokens is reached (to prevent
+    runaway loops). The `<s>` / `</s>` markers are stripped from the final output.
 
 (c) get_probability(model, sentence) — log-likelihood scoring
-    A sentence is re-tokenized as [<s>] + words + [</s>], and its total log
+    A sentence is re-tokenized as  `<s>` + words + `</s>` , and its total log
     probability is the sum of the log bigram probabilities:
 
         log P(sentence) = SUM over i of  log P(w_{i+1} | w_i)
